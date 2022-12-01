@@ -1,0 +1,14 @@
+# Rust
+debug/
+target/
+
+Cargo.lock
+
+**/*.rs.bk
+
+*.pdb
+
+# IDEs
+.fleet/
+.vscode/
+.idea/
