@@ -23,5 +23,12 @@ fn main() {
 
     elves.sort();
 
-    println!("{}", elves[elves.len() - 1]);
+    let mut top_three = 0;
+
+    let index = elves.len() - 3;
+    for i in 0..3 {
+        top_three += elves[index + i];
+    }
+
+    println!("{}", top_three);
 }
