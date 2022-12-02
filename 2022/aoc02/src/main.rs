@@ -22,35 +22,40 @@ fn main() {
     for line in input.lines() {
         let mut letters = line.split_whitespace();
         let opponent = match letters.next().unwrap() {
-            "A" => { RPS::Rock }
-            "B" => { RPS::Paper }
-            "C" => { RPS::Scissors }
-            _ => { panic!() }
+            "A" => RPS::Rock,
+            "B" => RPS::Paper,
+            "C" => RPS::Scissors,
+            _ => {
+                panic!()
+            }
         };
         match letters.next().unwrap() {
+            // Lose
             "X" => {
-                match opponent {
-                    RPS::Scissors => { score += 6 }
-                    RPS::Rock => { score += 3 }
-                    _ => {}
-                }
-                score += 1;
+                score += match opponent {
+                    RPS::Rock => { 3 }
+                    RPS::Paper => { 1 }
+                    RPS::Scissors => { 2 }
+                };
+                score += 0;
             }
+            // Draw
             "Y" => {
-                match opponent {
-                    RPS::Rock => { score += 6 }
-                    RPS::Paper => { score += 3 }
-                    _ => {}
-                }
-                score += 2;
-            }
-            "Z" => {
-                match opponent {
-                    RPS::Paper => { score += 6 }
-                    RPS::Scissors => { score += 3 }
-                    _ => {}
-                }
+                score += match opponent {
+                    RPS::Rock => { 1 }
+                    RPS::Paper => { 2 }
+                    RPS::Scissors => { 3 }
+                };
                 score += 3;
+            }
+            // Win
+            "Z" => {
+                score += match opponent {
+                    RPS::Rock => { 2 }
+                    RPS::Paper => { 3 }
+                    RPS::Scissors => { 1 }
+                };
+                score += 6;
             }
             _ => {}
         };
