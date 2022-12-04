@@ -26,7 +26,11 @@ fn main() {
             split.next().unwrap().parse::<i32>().unwrap(),
         );
 
-        if elf_1_begin >= elf_2_begin && elf_1_end <= elf_2_end || elf_1_begin <= elf_2_begin && elf_1_end >= elf_2_end {
+        if (elf_1_begin >= elf_2_begin && elf_1_end <= elf_2_end
+            || elf_1_begin <= elf_2_begin && elf_1_end >= elf_2_end)
+            || (elf_1_begin <= elf_2_begin && elf_2_begin <= elf_1_end
+                || elf_1_begin <= elf_2_end && elf_2_end <= elf_1_end)
+        {
             count += 1;
         }
     }
