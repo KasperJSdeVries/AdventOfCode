@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::fs::File;
 use std::io::Read;
 
@@ -5,7 +6,7 @@ type Stacks = Vec<Vec<char>>;
 
 trait Stack {
     fn from_config(input: &str) -> Self;
-    fn move_items(&mut self, amount: u8, from: usize, to: usize);
+    fn move_items(&mut self, amount: usize, from: usize, to: usize);
     fn print_tops(&self);
 }
 
@@ -47,11 +48,12 @@ impl Stack for Stacks {
         result
     }
 
-    fn move_items(&mut self, amount: u8, from: usize, to: usize) {
-        for _ in 0..amount {
-            let temp = self[from - 1].pop().unwrap();
-            self[to - 1].push(temp);
-        }
+    fn move_items(&mut self, amount: usize, from: usize, to: usize) {
+        let from_col = &mut self[from - 1];
+        let at = max(0, from_col.len() - amount);
+        let mut temp = from_col.split_off(at);
+        let to_col = &mut self[to - 1];
+        to_col.append(&mut temp);
     }
 
     fn print_tops(&self) {
@@ -78,7 +80,7 @@ fn main() {
     for line in moves.lines() {
         let mut split = line.split_whitespace();
         split.next();
-        let amount: u8 = split.next().unwrap().parse().unwrap();
+        let amount: usize = split.next().unwrap().parse().unwrap();
         split.next();
         let from: usize = split.next().unwrap().parse().unwrap();
         split.next();
