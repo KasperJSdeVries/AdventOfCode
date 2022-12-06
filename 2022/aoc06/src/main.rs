@@ -14,7 +14,7 @@ fn main() {
     let mut first_four = VecDeque::new();
     'outer: for (i, char) in input.iter().enumerate() {
         first_four.push_back(char);
-        if first_four.len() > 4 {
+        if first_four.len() > 14 {
             first_four.pop_front();
         } else {
             continue 'outer;
