@@ -10,14 +10,6 @@ trait FileSystemSize: Debug {
     fn get_size(&self) -> usize;
 }
 
-trait Deletable: FileSystemSize {
-    fn deletable(&self) {
-        if self.get_size() <= 100000 {
-            TOTAL_DELETED.fetch_add(self.get_size(), Ordering::SeqCst);
-        }
-    }
-}
-
 #[derive(Debug)]
 struct Directory {
     name: String,
@@ -59,8 +51,6 @@ impl FileSystemSize for Directory {
     }
 }
 
-impl Deletable for Directory {}
-
 #[derive(Debug)]
 struct File {
     parent: Weak<Directory>,
@@ -79,6 +69,31 @@ impl File {
 impl FileSystemSize for File {
     fn get_size(&self) -> usize {
         self.size
+    }
+}
+
+const TOTAL_SIZE: usize = 70_000_000;
+const SIZE_REQUIRED: usize = 30_000_000;
+
+fn dir_can_be_deleted(dir: Rc<Directory>, current_fs_size: usize) -> bool {
+    let size = dir.get_size();
+    if TOTAL_SIZE - current_fs_size + size > SIZE_REQUIRED {
+        return true;
+    }
+    false
+}
+
+fn get_deletable_dir_list(
+    dir: Rc<Directory>,
+    current_fs_size: usize,
+    deletable_dirs: &mut Vec<Rc<Directory>>,
+) {
+    if dir_can_be_deleted(dir.clone(), current_fs_size) {
+        deletable_dirs.push(dir.clone());
+
+        for child_dir in &*dir.child_dirs.lock().unwrap() {
+            get_deletable_dir_list(child_dir.clone(), current_fs_size, deletable_dirs);
+        }
     }
 }
 
@@ -159,15 +174,15 @@ fn main() {
             _ => panic!("Unknown command"),
         }
     }
-    get_total_deleted(root);
-    println!("{:?}", TOTAL_DELETED);
-}
 
-static TOTAL_DELETED: AtomicUsize = AtomicUsize::new(0);
-
-fn get_total_deleted(dir: Rc<Directory>) {
-    dir.deletable();
-    for child_dir in &*dir.child_dirs.lock().unwrap() {
-        get_total_deleted(child_dir.clone());
-    }
+    let mut deletable_dirs = Vec::new();
+    get_deletable_dir_list(root.clone(), root.get_size(), &mut deletable_dirs);
+    deletable_dirs.sort_by(|a, b| a.get_size().partial_cmp(&b.get_size()).unwrap());
+    let result = deletable_dirs.first().unwrap();
+    println!(
+        "{}: {} -> {}",
+        result.name,
+        result.get_size(),
+        root.get_size() - result.get_size()
+    );
 }
