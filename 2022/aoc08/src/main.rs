@@ -20,73 +20,119 @@ fn main() {
         }
     }
 
-    let mut count = 0;
+    let mut highest_score = 0;
 
     for (row_idx, row) in forest.iter().enumerate() {
         for (col_idx, &tree) in row.iter().enumerate() {
-            if row_idx == 0
-                || col_idx == 0
-                || row_idx == forest.len() - 1
-                || col_idx == row.len() - 1
-            {
-                count += 1;
-                continue;
-            }
+            let mut score = 1;
 
             // up
-            {
-                let mut largest = 0;
-                for r in 0..row_idx {
-                    if forest[r][col_idx] > largest {
-                        largest = forest[r][col_idx];
+            if row_idx == 0 {
+                score *= 0;
+            } else {
+                let mut trees = 1;
+                let mut r = row_idx - 1;
+                loop {
+                    if r == 0 || forest[r][col_idx] >= tree {
+                        score *= trees;
+                        break;
                     }
-                }
-                if largest < tree {
-                    count += 1;
-                    continue;
+                    trees += 1;
+                    r -= 1;
                 }
             }
             // down
-            {
-                let mut largest = 0;
-                for r in row_idx + 1..forest.len() {
-                    if forest[r][col_idx] > largest {
-                        largest = forest[r][col_idx];
+            if row_idx == forest.len() - 1 {
+                score *= 0;
+            } else {
+                let mut trees = 1;
+                let mut r = row_idx + 1;
+                loop {
+                    if r == forest.len() - 1 || forest[r][col_idx] >= tree {
+                        score *= trees;
+                        break;
                     }
-                }
-                if largest < tree {
-                    count += 1;
-                    continue;
+                    trees += 1;
+                    r += 1;
                 }
             }
-            // down
-            {
-                let mut largest = 0;
-                for c in 0..col_idx {
-                    if forest[row_idx][c] > largest {
-                        largest = forest[row_idx][c];
+            // left
+            if col_idx == 0 {
+                score *= 0;
+            } else {
+                let mut trees = 1;
+                let mut c = col_idx - 1;
+                loop {
+                    if c == 0 || forest[row_idx][c] >= tree {
+                        score *= trees;
+                        break;
                     }
-                }
-                if largest < tree {
-                    count += 1;
-                    continue;
+                    trees += 1;
+                    c -= 1;
                 }
             }
-            // down
-            {
-                let mut largest = 0;
-                for c in col_idx + 1..row.len() {
-                    if forest[row_idx][c] > largest {
-                        largest = forest[row_idx][c];
+            // right
+            if col_idx == row.len() - 1 {
+                score *= 0;
+            } else {
+                let mut trees = 1;
+                let mut c = col_idx + 1;
+                loop {
+                    if c == row.len() - 1 || forest[row_idx][c] >= tree {
+                        score *= trees;
+                        break;
                     }
+                    trees += 1;
+                    c += 1;
                 }
-                if largest < tree {
-                    count += 1;
-                    continue;
-                }
+            }
+
+            if score > 268464 / 2 {
+                print!("\x1b[38;5;1m{score:>8}\x1b[0m");
+            } else if score > 268464 / 4 {
+                print!("\x1b[38;5;2m{score:>8}\x1b[0m");
+            } else if score > 268464 / 8 {
+                print!("\x1b[38;5;3m{score:>8}\x1b[0m");
+            } else if score > 268464 / 16 {
+                print!("\x1b[38;5;4m{score:>8}\x1b[0m");
+            } else if score > 268464 / 32 {
+                print!("\x1b[38;5;5m{score:>8}\x1b[0m");
+            } else if score > 268464 / 64 {
+                print!("\x1b[38;5;6m{score:>8}\x1b[0m");
+            } else if score > 268464 / 128 {
+                print!("\x1b[38;5;7m{score:>8}\x1b[0m");
+            } else if score > 268464 / 256 {
+                print!("\x1b[38;5;8m{score:>8}\x1b[0m");
+            } else if score > 268464 / 512 {
+                print!("\x1b[38;5;9m{score:>8}\x1b[0m");
+            } else if score > 268464 / 1024 {
+                print!("\x1b[38;5;10m{score:>8}\x1b[0m");
+            } else if score > 268464 / 2048 {
+                print!("\x1b[38;5;11m{score:>8}\x1b[0m");
+            } else if score > 268464 / 4096 {
+                print!("\x1b[38;5;12m{score:>8}\x1b[0m");
+            } else if score > 268464 / 8192 {
+                print!("\x1b[38;5;13m{score:>8}\x1b[0m");
+            } else if score > 268464 / 16384 {
+                print!("\x1b[38;5;14m{score:>8}\x1b[0m");
+            } else if score > 268464 / 32768 {
+                print!("\x1b[38;5;16m{score:>8}\x1b[0m");
+            } else if score > 268464 / 65536 {
+                print!("\x1b[38;5;17m{score:>8}\x1b[0m");
+            } else if score > 268464 / 131072 {
+                print!("\x1b[38;5;18m{score:>8}\x1b[0m");
+            } else if score > 268464 / 262144 {
+                print!("\x1b[38;5;19m{score:>8}\x1b[0m");
+            } else {
+                print!("{score:>8}");
+            }
+
+            if score > highest_score {
+                highest_score = score;
             }
         }
+        println!();
     }
 
-    println!("{count}")
+    println!("{highest_score}")
 }
