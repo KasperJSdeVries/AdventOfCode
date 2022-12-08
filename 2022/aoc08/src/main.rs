@@ -86,52 +86,10 @@ fn main() {
                     c += 1;
                 }
             }
-
-            if score > 268464 / 2 {
-                print!("\x1b[38;5;1m{score:>8}\x1b[0m");
-            } else if score > 268464 / 4 {
-                print!("\x1b[38;5;2m{score:>8}\x1b[0m");
-            } else if score > 268464 / 8 {
-                print!("\x1b[38;5;3m{score:>8}\x1b[0m");
-            } else if score > 268464 / 16 {
-                print!("\x1b[38;5;4m{score:>8}\x1b[0m");
-            } else if score > 268464 / 32 {
-                print!("\x1b[38;5;5m{score:>8}\x1b[0m");
-            } else if score > 268464 / 64 {
-                print!("\x1b[38;5;6m{score:>8}\x1b[0m");
-            } else if score > 268464 / 128 {
-                print!("\x1b[38;5;7m{score:>8}\x1b[0m");
-            } else if score > 268464 / 256 {
-                print!("\x1b[38;5;8m{score:>8}\x1b[0m");
-            } else if score > 268464 / 512 {
-                print!("\x1b[38;5;9m{score:>8}\x1b[0m");
-            } else if score > 268464 / 1024 {
-                print!("\x1b[38;5;10m{score:>8}\x1b[0m");
-            } else if score > 268464 / 2048 {
-                print!("\x1b[38;5;11m{score:>8}\x1b[0m");
-            } else if score > 268464 / 4096 {
-                print!("\x1b[38;5;12m{score:>8}\x1b[0m");
-            } else if score > 268464 / 8192 {
-                print!("\x1b[38;5;13m{score:>8}\x1b[0m");
-            } else if score > 268464 / 16384 {
-                print!("\x1b[38;5;14m{score:>8}\x1b[0m");
-            } else if score > 268464 / 32768 {
-                print!("\x1b[38;5;16m{score:>8}\x1b[0m");
-            } else if score > 268464 / 65536 {
-                print!("\x1b[38;5;17m{score:>8}\x1b[0m");
-            } else if score > 268464 / 131072 {
-                print!("\x1b[38;5;18m{score:>8}\x1b[0m");
-            } else if score > 268464 / 262144 {
-                print!("\x1b[38;5;19m{score:>8}\x1b[0m");
-            } else {
-                print!("{score:>8}");
-            }
-
             if score > highest_score {
                 highest_score = score;
             }
         }
-        println!();
     }
 
     println!("{highest_score}")
