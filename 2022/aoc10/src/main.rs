@@ -1,3 +1,4 @@
+#![feature(int_roundings)]
 extern crate core;
 
 use std::fs::File;
@@ -19,6 +20,41 @@ impl Cycle {
     }
 }
 
+struct Communicator {
+    register: i32,
+    cycle: usize,
+    screen: [[bool; 40]; 6],
+}
+
+impl Communicator {
+    fn new() -> Self {
+        Self {
+            register: 1,
+            cycle: 0,
+            screen: [[false; 40]; 6],
+        }
+    }
+
+    fn next_cycle(&mut self) {
+        let current_pixel = (self.cycle % 40) as i32;
+        self.screen[self.cycle.div_floor(40) % 6][self.cycle % 40] = current_pixel
+            == self.register - 1
+            || current_pixel == self.register
+            || current_pixel == self.register + 1;
+        self.cycle += 1;
+    }
+
+    fn noop(&mut self) {
+        self.next_cycle();
+    }
+
+    fn addx(&mut self, value: i32) {
+        self.next_cycle();
+        self.next_cycle();
+        self.register += value;
+    }
+}
+
 fn main() {
     let mut input = String::new();
 
@@ -27,24 +63,28 @@ fn main() {
         file.read_to_string(&mut input).unwrap();
     }
 
-    let mut cycle = Cycle::new();
-    let mut x = 1;
-    let mut total = 0;
+    let mut communicator = Communicator::new();
 
     for line in input.lines() {
         let mut split = line.split_whitespace();
         let command = split.next().unwrap();
 
         match command {
-            "noop" => cycle.next(x, &mut total),
+            "noop" => communicator.noop(),
             "addx" => {
-                cycle.next(x, &mut total);
-                cycle.next(x, &mut total);
-                x += split.next().unwrap().parse::<i32>().unwrap();
+                communicator.addx(split.next().unwrap().parse().unwrap());
             }
             _ => panic!(),
         }
     }
 
-    println!("{}", total)
+    for row in communicator.screen {
+        for pixel in row {
+            match pixel {
+                true => print!("#"),
+                false => print!("."),
+            }
+        }
+        println!()
+    }
 }
