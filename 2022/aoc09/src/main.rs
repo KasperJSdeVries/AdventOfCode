@@ -10,11 +10,10 @@ fn main() {
         file.read_to_string(&mut input).unwrap();
     }
 
-    let mut head = (0, 0);
-    let mut tail = (0, 0);
+    let mut rope: [(i32, i32); 10] = [(0, 0); 10];
 
     let mut positions_touched = BTreeSet::new();
-    positions_touched.insert(tail);
+    positions_touched.insert(*rope.last().unwrap());
 
     for line in input.lines() {
         let mut split = line.split_whitespace();
@@ -23,49 +22,53 @@ fn main() {
 
         for _ in 0..amount {
             match direction {
-                "R" => head.0 += 1,
-                "U" => head.1 += 1,
-                "L" => head.0 -= 1,
-                "D" => head.1 -= 1,
+                "R" => rope.first_mut().unwrap().0 += 1,
+                "U" => rope.first_mut().unwrap().1 += 1,
+                "L" => rope.first_mut().unwrap().0 -= 1,
+                "D" => rope.first_mut().unwrap().1 -= 1,
                 other => {
                     panic!("{}", other)
                 }
             }
 
-            if distance_from(&head, &tail) > 1 {
-                move_tail(&head, &mut tail);
-                positions_touched.insert(tail);
+            for i in 1..rope.len() {
+                let prev_knot = rope[i - 1];
+                move_knot(&prev_knot, rope.get_mut(i).unwrap())
             }
+
+            positions_touched.insert(*rope.last().unwrap());
         }
     }
 
     println!("{}", positions_touched.len());
 }
 
-fn move_tail(head: &(i32, i32), tail: &mut (i32, i32)) {
-    if head.0 == tail.0 {
-        tail.1 += if (head.1 - tail.1).is_positive() {
-            1
+fn move_knot(head: &(i32, i32), tail: &mut (i32, i32)) {
+    if distance_from(head, tail) > 1 {
+        if head.0 == tail.0 {
+            tail.1 += if (head.1 - tail.1).is_positive() {
+                1
+            } else {
+                -1
+            };
+        } else if head.1 == tail.1 {
+            tail.0 += if (head.0 - tail.0).is_positive() {
+                1
+            } else {
+                -1
+            };
         } else {
-            -1
-        };
-    } else if head.1 == tail.1 {
-        tail.0 += if (head.0 - tail.0).is_positive() {
-            1
-        } else {
-            -1
-        };
-    } else {
-        tail.0 += if (head.0 - tail.0).is_positive() {
-            1
-        } else {
-            -1
-        };
-        tail.1 += if (head.1 - tail.1).is_positive() {
-            1
-        } else {
-            -1
-        };
+            tail.0 += if (head.0 - tail.0).is_positive() {
+                1
+            } else {
+                -1
+            };
+            tail.1 += if (head.1 - tail.1).is_positive() {
+                1
+            } else {
+                -1
+            };
+        }
     }
 }
 
